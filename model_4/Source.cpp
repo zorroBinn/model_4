@@ -5,11 +5,11 @@
 #include <Windows.h>
 using namespace std;
 
-const int INF = int(numeric_limits<int>::max);
+const double INF = numeric_limits<double>::infinity();
 
 struct Cell {
-    int cost;       // Стоимость перевозки
-    int allocation; // Распределение
+    double cost;       // Стоимость перевозки
+    int allocation;    // Распределение
 };
 
 // Функция для вычисления базисного решения методом СЗУ
@@ -17,7 +17,7 @@ void northwestCorner(vector<vector<Cell>>& table, vector<int>& supply, vector<in
     int m = supply.size();
     int n = demand.size();
 
-    for (short i = 0, j = 0; i < m && j < n; ) {
+    for (short i = 0, j = 0; i < m && j < n;) {
         int allocated = min(supply[i], demand[j]);
         table[i][j].allocation = allocated;
         supply[i] -= allocated;
@@ -29,8 +29,8 @@ void northwestCorner(vector<vector<Cell>>& table, vector<int>& supply, vector<in
 }
 
 // Функция для вычисления целевой функции
-int calculateObjective(const vector<vector<Cell>>& table) {
-    int totalCost = 0;
+double calculateObjective(const vector<vector<Cell>>& table) {
+    double totalCost = 0;
     for (const auto& row : table) {
         for (const auto& cell : row) {
             totalCost += cell.allocation * cell.cost;
@@ -40,7 +40,7 @@ int calculateObjective(const vector<vector<Cell>>& table) {
 }
 
 // Функция для проверки оптимальности методом потенциалов
-bool potentialsMethod(vector<vector<Cell>>& table, vector<int>& u, vector<int>& v) {
+bool potentialsMethod(vector<vector<Cell>>& table, vector<double>& u, vector<double>& v) {
     int m = table.size();
     int n = table[0].size();
     u.assign(m, INF);
@@ -64,7 +64,7 @@ bool potentialsMethod(vector<vector<Cell>>& table, vector<int>& u, vector<int>& 
     for (short i = 0; i < m; ++i) {
         for (short j = 0; j < n; ++j) {
             if (table[i][j].allocation == 0) {
-                int delta = table[i][j].cost - (u[i] + v[j]);
+                double delta = table[i][j].cost - (u[i] + v[j]);
                 if (delta < 0) {
                     optimal = false;
                 }
@@ -80,14 +80,15 @@ int main() {
     SetConsoleOutputCP(1251);
 
     int m = 4, n = 5; // Размерность таблицы
-    vector<int> supply = { 20, 35, 40, 15 }; // Запасы
-    vector<int> demand = { 30, 20, 25, 15, 20 }; // Потребности
+    vector<int> supply = { 20, 35, 40, 15 };        // Запасы
+    vector<int> demand = { 30, 20, 25, 15, 20 };    // Потребности
+
     // Матрица затрат
-    vector<vector<int>> cost = {
-        {1, 5, 3, 2, 2},
-        {2, 0, 0, 5, 1},
-        {4, 2, 3, 0, 3},
-        {3, 5, 1, 5, 0}
+    vector<vector<double>> cost = {
+        {1.5, 3, 2, 2.5, 0},
+        {2, 0.5, 1.5, 3, 0},
+        {4, 2, 3, 0, 0},
+        {3.5, 1.5, 3, 1, 0}
     };
 
     vector<vector<Cell>> table(m, vector<Cell>(n));
@@ -103,14 +104,15 @@ int main() {
     cout << "Первоначальный план (Северо-Западный угол):\n";
     for (short i = 0; i < m; ++i) {
         for (short j = 0; j < n; ++j) {
-            cout << setw(4) << table[i][j].allocation;
+            cout << setw(6) << table[i][j].allocation;
         }
         cout << endl;
     }
 
-    cout << "Значение целевой функции: " << calculateObjective(table) << endl;
+    double totalCost = calculateObjective(table);
+    cout << "Значение целевой функции: F = " << fixed << setprecision(2) << totalCost << endl;
 
-    vector<int> u, v;
+    vector<double> u, v;
     while (!potentialsMethod(table, u, v)) {
         cout << "Решение не оптимально, выполняется улучшение...\n";
         // (цикл пересчета).
