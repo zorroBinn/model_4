@@ -74,6 +74,25 @@ bool potentialsMethod(vector<vector<Cell>>& table, vector<double>& u, vector<dou
     return optimal;
 }
 
+// Функция для вывода таблицы и потенциалов
+void printTableAndPotentials(const vector<vector<Cell>>& table, const vector<double>& u, const vector<double>& v) {
+    int m = table.size();
+    int n = table[0].size();
+
+    for (short i = 0; i < m; ++i) {
+        for (short j = 0; j < n; ++j) {
+            cout << setw(6) << table[i][j].allocation;
+        }
+        cout << " | " << fixed << setprecision(2) << (u[i] == INF ? 0 : u[i]) << endl; // Потенциалы u справа
+    }
+
+    cout << string(6 * n + 4, '-') << endl; // Разделитель
+    for (short j = 0; j < n; ++j) {
+        cout << setw(6) << fixed << setprecision(2) << (v[j] == INF ? 0 : v[j]);
+    }
+    cout << "  <^ Потенциалы V и U" << endl;
+}
+
 // Основная функция
 int main() {
     SetConsoleCP(1251);
@@ -101,22 +120,18 @@ int main() {
 
     northwestCorner(table, supply, demand);
 
+    vector<double> u, v;
+    potentialsMethod(table, u, v);
     cout << "Первоначальный план (Северо-Западный угол):\n";
-    for (short i = 0; i < m; ++i) {
-        for (short j = 0; j < n; ++j) {
-            cout << setw(6) << table[i][j].allocation;
-        }
-        cout << endl;
-    }
+    printTableAndPotentials(table, u, v);
 
     double totalCost = calculateObjective(table);
-    cout << "Значение целевой функции: F = " << fixed << setprecision(2) << totalCost << endl;
+    cout << endl << "Значение целевой функции: F = " << fixed << setprecision(2) << totalCost << endl << endl;
 
-    vector<double> u, v;
     while (!potentialsMethod(table, u, v)) {
         cout << "Решение не оптимально, выполняется улучшение...\n";
-        // (цикл пересчета).
-        break;
+        
+        break; // Добавьте оптимизацию для полного решения
     }
 
     cout << "Оптимальное решение достигнуто.\n";
