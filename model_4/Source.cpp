@@ -2,9 +2,7 @@
 #include <vector>
 #include <iomanip>
 #include <limits>
-#include <stack>
 #include <set>
-#include <queue>
 #include <Windows.h>
 using namespace std;
 
@@ -275,11 +273,10 @@ void printTableAndPotentials(const vector<vector<Cell>>& table, const vector<dou
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-
+    //Вариант 16
     int m = 4, n = 5; //Размерность таблицы
     vector<int> supply = { 20, 35, 40, 15 }; //Запасы
     vector<int> demand = { 30, 20, 25, 15, 20 }; //Потребности
-
     //Матрица затрат
     vector<vector<double>> cost = {
         {1.5, 3, 2, 2.5, 0},
@@ -287,6 +284,17 @@ int main() {
         {4, 2, 3, 0, 0},
         {3.5, 1.5, 3, 1, 0}
     };
+
+    //Пример из лекции
+    //int m = 3, n = 3;
+    //vector<int> supply = { 10, 20, 30 }; //Запасы
+    //vector<int> demand = { 15, 20, 25 }; //Потребности
+    ////Матрица затрат
+    //vector<vector<double>> cost = {
+    //    {5, 3, 1},
+    //    {3, 2, 4},
+    //    {4, 1, 2}
+    //};
 
     vector<vector<Cell>> table(m, vector<Cell>(n));
     for (short i = 0; i < m; ++i) {
